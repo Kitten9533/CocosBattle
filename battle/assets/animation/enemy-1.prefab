@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "bullet",
+    "_name": "enemy-1",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -19,24 +19,18 @@
     "_components": [
       {
         "__id__": 2
-      },
-      {
-        "__id__": 3
-      },
-      {
-        "__id__": 4
       }
     ],
     "_prefab": {
-      "__id__": 5
+      "__id__": 3
     },
     "_id": "",
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
-      "g": 0,
-      "b": 0,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_cascadeOpacityEnabled": true,
@@ -47,17 +41,17 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 12,
-      "height": 27
+      "width": 51,
+      "height": 38
     },
     "_rotationX": 0,
     "_rotationY": 0,
-    "_scaleX": 1,
+    "_scaleX": 1.5,
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+      "x": -375,
+      "y": -667
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -75,7 +69,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "815b6229-a749-4d72-98b7-50a2ed60379e"
+      "__uuid__": "28b1f97e-442a-4781-850b-78eab02ae657"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -93,44 +87,14 @@
     "_atlas": null
   },
   {
-    "__type__": "cc.BoxCollider",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "tag": 1,
-    "_offset": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
-    },
-    "_size": {
-      "__type__": "cc.Size",
-      "width": 12,
-      "height": 27
-    }
-  },
-  {
-    "__type__": "df33c1YzDtB+LyQLFBN2kW7",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "bulletDistance": 30
-  },
-  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "930fd2b4-4268-4d2b-ba11-b96d6f3c02b5"
+      "__id__": 0
     },
-    "fileId": "d2Lb4hXCpGzpWJ9PqRz0EE",
+    "fileId": "67ir8RoT9J37DyjR7V/j0m",
     "sync": false
   }
 ]

@@ -25,13 +25,13 @@
     "REMOTE_SERVER_ROOT": "",
     "orientation": "portrait"
   },
-  "renderMode": "0",
+  "renderMode": "1",
   "startScene": "673c5a61-3508-4147-a739-07ddf44ea633",
-  "title": "hello_world",
+  "title": "Battle",
   "webOrientation": "auto",
   "wechatgame": {
     "REMOTE_SERVER_ROOT": "",
-    "appid": "wx6ac3f5090a6b99c5",
+    "appid": "wx210fa6dcc221b772",
     "isSubdomain": false,
     "orientation": "portrait",
     "subContext": ""

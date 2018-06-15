@@ -1,14 +1,14 @@
 {
   "ver": "1.0.0",
-  "uuid": "59b8cd31-f14e-4746-80fb-fc38e185bbb2",
+  "uuid": "dfc3c376-45df-4787-981a-9cd01030a12d",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "subMetas": {
-    "enemy": {
+    "player-3": {
       "ver": "1.0.3",
-      "uuid": "6ab009c2-388d-47f1-be47-6ecca2024287",
-      "rawTextureUuid": "59b8cd31-f14e-4746-80fb-fc38e185bbb2",
+      "uuid": "1cb45c1c-2155-41b4-b519-cd007140140f",
+      "rawTextureUuid": "dfc3c376-45df-4787-981a-9cd01030a12d",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
@@ -16,10 +16,10 @@
       "offsetY": -0.5,
       "trimX": 0,
       "trimY": 1,
-      "width": 51,
-      "height": 38,
-      "rawWidth": 51,
-      "rawHeight": 39,
+      "width": 98,
+      "height": 123,
+      "rawWidth": 98,
+      "rawHeight": 124,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

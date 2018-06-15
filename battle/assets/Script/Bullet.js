@@ -28,7 +28,7 @@ cc.Class({
         //     }
         // },
         // 子弹y轴上间距
-        bulletDistance: null,
+        bulletDistance: 30,
         // 暂存 Game 对象的引用
         game: {
             default: null,
@@ -37,16 +37,32 @@ cc.Class({
     },
 
     // 判读是否需要把子弹返回到对象池中
+    shouldDestroy() {
+        if (this.node.y >= this.node.parent.getBoundingBox().height / 2) {
+            this.game.destroyBullet(this.node);
+            // this.destroyBulletNode();
+        }
+    },
 
-    shouldDestory() {
-        if (this.node.y >= this.node.parent.getBoundingBox().yMax) {
-            this.game.destoryBullet(this.node);
+    destroyBulletNode() {
+        let arr = this.game.bulletArray;
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i].uuid == this.node.uuid) {
+                arr.splice(i, 1);
+                // this.node.destroy();
+                break;
+            }
         }
     },
 
     init(game) {
         this.game = game;
         this.doShot = true;
+        this.game.bulletArray.push(this.node);
+    },
+
+    playAgain() {
+        console.log('bullet anain');
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -64,7 +80,11 @@ cc.Class({
         if (!this.doShot) {
             return;
         }
+        if (!this.game.gameState) {
+            return;
+        }
         this.node.y += this.bulletDistance;
-        this.shouldDestory();
+        // 子弹不可见时
+        this.shouldDestroy();
     },
 });

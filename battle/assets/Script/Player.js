@@ -10,7 +10,6 @@
 
 cc.Class({
     extends: cc.Component,
-
     properties: {
         // foo: {
         //     // ATTRIBUTES:
@@ -28,6 +27,11 @@ cc.Class({
         //     }
         // },
         xSpeed: 4,
+        // 暂存 Game 对象的引用
+        game: {
+            default: null,
+            serializable: false
+        },
     },
 
     setInputControl() {
@@ -89,32 +93,49 @@ cc.Class({
 
     // 拖动飞机 控制移动
     initTouchMove() {
-        let minPosX = -this.node.parent.width / 2;
-        let maxPosX = this.node.parent.width / 2;
-        let leftBoard = minPosX + this.node.width / 2;
-        let rightBoard = maxPosX - this.node.width / 2;
-        let topBoard = this.node.parent.height / 2 - this.node.height / 2;
-        let bottomBoard = -this.node.parent.height / 2 + this.node.height / 2;
         this.accLeft = false;
         this.accRight = false;
         // this.setInputControl();
-        this.node.on(cc.Node.EventType.TOUCH_MOVE, function(event) {
-            var delta = event.touch.getDelta();
-            this.x += delta.x;
-            this.y += delta.y;
-            if (this.x > rightBoard) {
-                this.x = rightBoard;
-            }
-            if (this.x < leftBoard) {
-                this.x = leftBoard;
-            }
-            if (this.y > topBoard) {
-                this.y = topBoard;
-            }
-            if (this.y < bottomBoard) {
-                this.y = bottomBoard;
-            }
-        }, this.node);
+        this.node.on(cc.Node.EventType.TOUCH_MOVE, this.playerMove, this.node);
+    },
+
+    playerMove(event) {
+        let delta = event.touch.getDelta();
+        this.x += delta.x;
+        this.y += delta.y;
+    },
+
+    onCollisionEnter: function(other, self) {
+        // 玩家被敌人撞到后
+        if (other.tag == 2) {
+            let ani = this.getComponent(cc.Animation);
+            // ani.on('stop', function() {
+            //     console.log('stop')
+            // }, this);
+            let animState = ani.play('playerDestroy');
+        }
+        // TODO
+    },
+
+    playAgain() {
+        let ani = this.getComponent(cc.Animation);
+        ani.setCurrentTime(0, 'playerDestroy');
+        // player复位
+        // this.node.setPosition(0, -this.game.node.height / 4);
+        let resetPos = cc.moveTo(0.8, 0, -this.game.node.height / 4);
+        this.node.runAction(resetPos);
+        this.node.on(cc.Node.EventType.TOUCH_MOVE, this.playerMove, this.node);
+    },
+
+    gameOver() {
+        this.game.gameOver();
+        // var action = cc.moveTo(0.8, 0, -this.game.node.getBoundingBox().height / 4);+
+        // this.node.runAction(action);
+        this.node.off(cc.Node.EventType.TOUCH_MOVE, this.playerMove, this.node);
+    },
+
+    init(game) {
+        this.game = game;
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -128,19 +149,23 @@ cc.Class({
     },
 
     update(dt) {
-        // console.log(minPox, maxPox, leftBoard, rightBoard);
-        // if (this.accLeft) {
-        //     this.node.x = this.node.x - 2 * this.xSpeed;
-        // }
-        // if (this.accRight) {
-        //     this.node.x = this.node.x + 2 * this.xSpeed;
-
-        // }
-        // if (this.node.x > rightBoard) {
-        //     this.node.x = rightBoard;
-        // }
-        // if (this.node.x < leftBoard) {
-        //     this.node.x = leftBoard;
-        // }
+        let minPosX = -this.node.parent.width / 2;
+        let maxPosX = this.node.parent.width / 2;
+        let leftBoard = minPosX + this.node.width / 2;
+        let rightBoard = maxPosX - this.node.width / 2;
+        let topBoard = this.node.parent.height / 2 - this.node.height / 2;
+        let bottomBoard = -this.node.parent.height / 2 + this.node.height / 2;
+        if (this.node.x > rightBoard) {
+            this.node.x = rightBoard;
+        }
+        if (this.node.x < leftBoard) {
+            this.node.x = leftBoard;
+        }
+        if (this.node.y > topBoard) {
+            this.node.y = topBoard;
+        }
+        if (this.node.y < bottomBoard) {
+            this.node.y = bottomBoard;
+        }
     },
 });

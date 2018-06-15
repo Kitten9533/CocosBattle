@@ -1,32 +1,13 @@
-// Learn cc.Class:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
+const Player = require('Player');
+window.Global = {
+    hasStart: false,
+    playAgain: false,
+};
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
         far_bg: [cc.Node],
         far_speed: null,
         bulletPrefab: {
@@ -39,13 +20,41 @@ cc.Class({
         },
         playerNode: {
             default: null,
-            type: cc.Node,
+            type: Player,
         },
-        //发射子弹的间隔 多少次update后
+        // 发射子弹的间隔 多少次update后
         bulletSpacing: null,
-        //敌人生成的间隔
+        // 敌人生成的间隔
         enemySpacing: null,
+        // 敌人数组
+        enemyArray: {
+            default: [],
+            type: Array,
+        },
+        // 子弹数组
+        bulletArray: {
+            default: [],
+            type: Array,
+        },
+        // 得分
+        score: 0,
+        scoreLabel: {
+            default: null,
+            type: cc.Label,
+        },
+        bulletPoolSize: 20,
+        enemyPoolSize: 20,
+        playAgainBtn: cc.Node,
+        //开始游戏按钮
+        startBtn: cc.Node,
+        //游戏logo
+        gameLogo: cc.Node,
     },
+
+    // 碰撞组件tag
+    // 0 player
+    // 1 bullet
+    // 2 enemy
 
     bgMove(bgList, speed) {
         for (let index = 0; index < bgList.length; index++) {
@@ -68,8 +77,7 @@ cc.Class({
 
     initBulletPool() {
         this.bulletPool = new cc.NodePool();
-        let bulletCount = 10;
-        for (let i = 0; i < bulletCount; i++) {
+        for (let i = 0; i < this.bulletPoolSize; i++) {
             let bullet = cc.instantiate(this.bulletPrefab); // 创建节点
             this.bulletPool.put(bullet); // 通过 putInPool 接口放入对象池
         }
@@ -89,14 +97,13 @@ cc.Class({
     },
 
     // 子弹击中，或者超出边界后
-    destoryBullet(bullet) {
+    destroyBullet(bullet) {
         this.bulletPool.put(bullet);
     },
 
     initEnemyPool() {
         this.enemyPool = new cc.NodePool();
-        let enemyCount = 5;
-        for (let i = 0; i < enemyCount; i++) {
+        for (let i = 0; i < this.enemyPoolSize; i++) {
             let enemy = cc.instantiate(this.enemyPrefab);
             this.enemyPool.put(enemy);
         }
@@ -116,15 +123,19 @@ cc.Class({
         enemy.getComponent('Enemy').init(this);
     },
 
+    destroyEnemy(enemy) {
+        this.enemyPool.put(enemy);
+    },
+
     //获取子弹的初始位置，位于飞机的中间 头部位置
     getBulletPos() {
         let {
             x,
             y,
-        } = this.playerNode.getBoundingBox().center;
+        } = this.playerNode.node.getBoundingBox().center;
         let {
             height
-        } = this.playerNode.getBoundingBox().height;
+        } = this.playerNode.node.getBoundingBox().height;
         return cc.p(x, y + 100);
     },
 
@@ -134,30 +145,120 @@ cc.Class({
             height
         } = this.node.getBoundingBox();
         //去掉敌人的宽度，使敌人不会只显示一半
-        let w = this.width - enemyWidth;
+        let w = this.node.width - enemyWidth;
         let randomX = -w / 2 + Math.random() * w;
         return cc.p(randomX, height / 2);
+    },
+
+    // 得分
+    gainScore() {
+        // 更新 scoreDisplay Label 的文字
+        this.scoreLabel.string = 'Score: ' + this.score.toString();
     },
 
     onGameStart() {
         this.gameState = true;
         this.bulletCount = 0;
         this.enemyCount = 0;
+        this.score = 0;
+        this.playerNode.node.active = true;
+        this.startBtn.active = false;
+        this.gameLogo.active = false;
     },
+
+    playAgain() {
+        Global.playAgain = true;
+        cc.director.loadScene('game');
+
+        // this.onGameStart();
+        // this.playerNode.playAgain();
+        // for (let i = 0; i < this.enemyArray.length; i++) {
+        //     if (i < this.enemyPool.size()) {
+        //         this.enemyPool.put(this.enemyArray[i]);
+        //         continue;
+        //     }
+        //     this.enemyArray[i].destroy();
+        // }
+        // for (let j = 0; j < this.bulletArray.length; j++) {
+        //     if (j < this.bulletPool.size()) {
+        //         this.bulletPool.put(this.bulletArray[j]);
+        //         continue;
+        //     }
+        //     this.bulletArray[i].destroy();
+        // }
+        // return;
+        // let self = this;
+        // cc.director.loadScene('game', function() {
+        //     Global.hasStart = true;
+        // });
+        // return;
+        // this.onGameStart();
+        // this.scoreLabel.string = 'Score: ' + this.score.toString();
+        // this.playerNode.playAgain();
+        // for (let i = 0; i < this.enemyArray.length; i++) {
+        //     if (i < this.enemyPoolSize) {
+        //         this.enemyPool.put(this.enemyArray[i]);
+        //         continue;
+        //     }
+        //     this.enemyArray[i].destroy();
+        // }
+        // for (let j = 0; j < this.bulletArray.length; j++) {
+        //     if (j < this.bulletPoolSize) {
+        //         this.bulletPool.put(this.bulletArray[j]);
+        //         continue;
+        //     }
+        //     this.bulletArray[i].destroy();
+        // }
+    },
+
+    gameOver() {
+        // this.scoreLabel.string = "Game Over";
+        this.gameState = false;
+        this.playAgainBtn.active = true;
+    },
+
+    // hasCollision() {
+    //     let bullets = this.bulletArray;
+    //     let enemys = this.enemyArray;
+    //     for (let i = 0; i < enemys.length; i++) {
+    //         for (let j = 0; j < bullets.length; j++) {
+    //             // console.log(enemys[i].getBoundingBox(), bullets[j].getBoundingBox());
+    //         }
+    //     }
+    // },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
+        this.gameLogo.active = false;
+        this.startBtn.active = false;
+        if (!Global.hasStart) {
+            Global.hasStart = true;
+            this.gameLogo.active = true;
+            this.startBtn.active = true;
+        }
+        this.playAgainBtn.active = false;
+        // 用于碰撞
+        cc.director.getCollisionManager().enabled = true;
+        // this.playerNode.init(this);
+        this.playerNode.init(this)
+        this.playerNode.node.setPosition(0, -this.node.height / 4);
+        // cc.director.getCollisionManager().enabledDebugDraw = true;
+        // cc.director.getCollisionManager().enabledDrawBoundingBox = true;
         let {
             width,
             height
         } = this.node.getBoundingBox();
+        this.scoreLabel.node.setPosition(-this.node.width / 2 + 36, this.node.height / 2 - this.scoreLabel.node.height / 2 - 50);
         this.width = width;
         this.height = height;
         this.gameState = false;
+        this.playerNode.node.active = false;
         this.initBulletPool();
         this.initEnemyPool();
-        this.onGameStart();
+        if (Global.playAgain) {
+            this.onGameStart();
+        }
     },
 
     start() {
@@ -168,8 +269,11 @@ cc.Class({
         if (!this.gameState) {
             return;
         }
+        //背景移动
         this.bgMove(this.far_bg, this.far_speed);
         this.checkBgReset(this.far_bg);
+        // 碰撞检测
+        // this.hasCollision();
         this.bulletCount++;
         if (this.bulletCount >= this.bulletSpacing) {
             this.createBullet();
