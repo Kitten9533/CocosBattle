@@ -49,6 +49,7 @@ cc.Class({
         startBtn: cc.Node,
         //游戏logo
         gameLogo: cc.Node,
+        loadingNode: cc.Node,
     },
 
     // 碰撞组件tag
@@ -157,6 +158,9 @@ cc.Class({
     },
 
     onGameStart() {
+        let ani = this.loadingNode.getComponent(cc.Animation);
+        ani.stop();
+        this.loadingNode.active = false;
         this.gameState = true;
         this.bulletCount = 0;
         this.enemyCount = 0;
@@ -169,24 +173,6 @@ cc.Class({
     playAgain() {
         Global.playAgain = true;
         cc.director.loadScene('game');
-
-        // this.onGameStart();
-        // this.playerNode.playAgain();
-        // for (let i = 0; i < this.enemyArray.length; i++) {
-        //     if (i < this.enemyPool.size()) {
-        //         this.enemyPool.put(this.enemyArray[i]);
-        //         continue;
-        //     }
-        //     this.enemyArray[i].destroy();
-        // }
-        // for (let j = 0; j < this.bulletArray.length; j++) {
-        //     if (j < this.bulletPool.size()) {
-        //         this.bulletPool.put(this.bulletArray[j]);
-        //         continue;
-        //     }
-        //     this.bulletArray[i].destroy();
-        // }
-        // return;
         // let self = this;
         // cc.director.loadScene('game', function() {
         //     Global.hasStart = true;
@@ -232,10 +218,15 @@ cc.Class({
     onLoad() {
         this.gameLogo.active = false;
         this.startBtn.active = false;
+        this.loadingNode.active = false;
         if (!Global.hasStart) {
             Global.hasStart = true;
             this.gameLogo.active = true;
             this.startBtn.active = true;
+            this.loadingNode.active = true;
+            let ani = this.loadingNode.getComponent(cc.Animation);
+            let doani = ani.play('loading');
+            doani.repeatCount = Infinity;
         }
         this.playAgainBtn.active = false;
         // 用于碰撞
