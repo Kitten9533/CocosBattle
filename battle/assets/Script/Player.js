@@ -107,7 +107,7 @@ cc.Class({
 
     onCollisionEnter: function(other, self) {
         // 玩家被敌人撞到后
-        if (other.tag == 2) {
+        if (other.tag == 2 || other.tag == 3 || other.tag == 4) {
             let ani = this.getComponent(cc.Animation);
             // ani.on('stop', function() {
             //     console.log('stop')

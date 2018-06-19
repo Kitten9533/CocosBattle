@@ -64,6 +64,7 @@ cc.Class({
     onCollisionEnter(other, self) {
         // other为子弹节点时, 都消失 子弹和敌人
         if (other.tag == 1) {
+            other.node.destroy();
             let ani = this.getComponent(cc.Animation);
             ani.play('enemyDestroy');
             ani.deleteEnemy = function() {

@@ -3,7 +3,7 @@
   "_name": "enemyDestroy",
   "_objFlags": 0,
   "_rawFiles": null,
-  "_duration": 0.18333333333333332,
+  "_duration": 0.13333333333333333,
   "sample": 60,
   "speed": 1,
   "wrapMode": 1,
@@ -43,7 +43,7 @@
   },
   "events": [
     {
-      "frame": 0.18333333333333332,
+      "frame": 0.13333333333333333,
       "func": "deleteEnemy",
       "params": []
     }

@@ -492,7 +492,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 111,
+      "width": 49,
       "height": 27
     },
     "_rotationX": 0,
@@ -520,7 +520,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "8f84e6e5-b024-4fc0-9295-efac6c55434b"
+      "__uuid__": "6ce541b3-ef11-4d00-a148-44bce338b30e"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -1102,7 +1102,7 @@
       "width": 750,
       "height": 1334
     },
-    "_fitWidth": true,
+    "_fitWidth": false,
     "_fitHeight": true
   },
   {
@@ -1131,17 +1131,26 @@
     "enemyPrefab": {
       "__uuid__": "eaa957f8-a5e3-4608-a4c1-9c4030f9f0ed"
     },
+    "helicopterPrefab": {
+      "__uuid__": "1961c8ec-1676-4611-a123-aa28ce64ca78"
+    },
+    "bossPrefab": {
+      "__uuid__": "9544d261-fc69-44af-b19a-71857ba5390d"
+    },
     "playerNode": {
       "__id__": 23
     },
     "bulletSpacing": 20,
-    "enemySpacing": 40,
+    "enemySpacing": 60,
+    "helicopterSpacing": 300,
+    "bossSpacing": 600,
     "enemyArray": [],
     "bulletArray": [],
     "score": 0,
     "scoreLabel": {
       "__id__": 20
     },
+    "hasBoss": false,
     "bulletPoolSize": 20,
     "enemyPoolSize": 20,
     "playAgainBtn": {

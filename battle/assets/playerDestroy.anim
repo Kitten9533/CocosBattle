@@ -3,7 +3,7 @@
   "_name": "playerDestroy",
   "_objFlags": 0,
   "_rawFiles": null,
-  "_duration": 0.23333333333333334,
+  "_duration": 0.18333333333333332,
   "sample": 60,
   "speed": 1,
   "wrapMode": 1,
@@ -48,7 +48,7 @@
   },
   "events": [
     {
-      "frame": 0.23333333333333334,
+      "frame": 0,
       "func": "gameOver",
       "params": []
     }
