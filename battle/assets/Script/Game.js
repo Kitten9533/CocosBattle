@@ -369,8 +369,10 @@ cc.Class({
 			this.createHelicopter();
 			this.helicopterCount = 0;
 		}
-		this.bossCount++;
-		if ((this.score / 200) >= 1 && !this.hasBoss && this.bossCount >= this.bossSpacing) {
+		if (!this.hasBoss) {
+			this.bossCount++;
+		}
+		if ((this.score / 200) >= 1 && this.bossCount >= this.bossSpacing) {
 			// if ((this.score / 100) >= 1 && !this.hasBoss) {
 			this.createBoss();
 			this.hasBoss = true;

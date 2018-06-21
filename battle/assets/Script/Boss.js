@@ -19,8 +19,8 @@ cc.Class({
             serializable: false
         },
         bossMove: false,
-        hp: 15,
-        score: 50,
+        hp: 20,
+        score: 80,
         hitCounts: 0,
         hasBeenDestroyed: false,
     },
