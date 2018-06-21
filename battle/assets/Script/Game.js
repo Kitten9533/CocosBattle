@@ -72,6 +72,8 @@ cc.Class({
 		// 补给出现的间隔
 		supplySpacing: 1000,
 		supplyCount: 0,
+		gotSupplyCount: 0,
+		timer: 0,
 	},
 
 	// 碰撞组件tag
@@ -109,17 +111,66 @@ cc.Class({
 		}
 	},
 
-	createBullet() {
+	// 获得补给后
+	gotSupply() {
+		if (this.bulletSpacing > 10) {
+			this.bulletSpacing -= 2;
+		}
+		this.gotSupplyCount++;
+	},
+
+	createBulletCommon() {
 		let bullet = null;
 		if (this.bulletPool.size() > 0) { // 通过 size 接口判断对象池中是否有空闲的对象
 			bullet = this.bulletPool.get();
 		} else { // 如果没有空闲对象，也就是对象池中备用对象不够时，我们就用 cc.instantiate 重新创建
 			bullet = cc.instantiate(this.bulletPrefab);
 		}
+		return bullet;
+	},
+
+	createBullet() {
+		let bullet = this.createBulletCommon();
 		this.node.addChild(bullet);
 		// 设置子弹的初始位置
 		bullet.setPosition(this.getBulletPos());
 		bullet.getComponent('Bullet').init(this);
+	},
+
+	createBullet2() {
+		let bullet1 = this.createBulletCommon();
+		let bullet2 = this.createBulletCommon();
+		this.node.addChild(bullet1);
+		this.node.addChild(bullet2);
+		// 设置子弹的初始位置
+		let {
+			x,
+			y
+		} = this.getBulletPosCommon();
+		bullet1.setPosition(cc.p(x - 43, y + 40));
+		bullet1.getComponent('Bullet').init(this);
+		bullet2.setPosition(cc.p(x + 43, y + 40));
+		bullet2.getComponent('Bullet').init(this);
+	},
+
+	createBullet3() {
+		let bullet1 = this.createBulletCommon();
+		let bullet2 = this.createBulletCommon();
+		let bullet3 = this.createBulletCommon();
+		this.node.addChild(bullet1);
+		this.node.addChild(bullet2);
+		this.node.addChild(bullet3);
+		// 设置子弹的初始位置
+		let {
+			x,
+			y
+		} = this.getBulletPosCommon();
+		bullet1.setPosition(cc.p(x - 43, y + 40));
+		bullet1.getComponent('Bullet').init(this);
+		bullet2.setPosition(cc.p(x + 43, y + 40));
+		bullet2.getComponent('Bullet').init(this);
+		bullet3.setPosition(cc.p(x, y + 100));
+		bullet3.getComponent('Bullet').init(this);
 	},
 
 	// 子弹击中，或者超出边界后
@@ -211,8 +262,7 @@ cc.Class({
 		this.helicopterPool.put(helicopter);
 	},
 
-	//获取子弹的初始位置，位于飞机的中间 头部位置
-	getBulletPos() {
+	getBulletPosCommon() {
 		let {
 			x,
 			y,
@@ -220,6 +270,18 @@ cc.Class({
 		let {
 			height
 		} = this.playerNode.node.getBoundingBox().height;
+		return {
+			x,
+			y
+		};
+	},
+
+	//获取子弹的初始位置，位于飞机的中间 头部位置
+	getBulletPos() {
+		let {
+			x,
+			y
+		} = this.getBulletPosCommon();
 		return cc.p(x, y + 100);
 	},
 
@@ -271,13 +333,6 @@ cc.Class({
 	gainScore() {
 		// 更新 scoreDisplay Label 的文字
 		this.scoreLabel.string = 'Score: ' + this.score.toString();
-	},
-
-	// 获得补给后
-	gotSupply() {
-		if (this.bulletSpacing > 10) {
-			this.bulletSpacing -= 2;
-		}
 	},
 
 	onGameStart() {
@@ -398,7 +453,13 @@ cc.Class({
 		// this.hasCollision();
 		this.bulletCount++;
 		if (this.bulletCount >= this.bulletSpacing) {
-			this.createBullet();
+			if (this.gotSupplyCount == 0) {
+				this.createBullet();
+			} else if (this.gotSupplyCount == 1) {
+				this.createBullet2();
+			} else {
+				this.createBullet3();
+			}
 			this.bulletCount = 0;
 		}
 		this.enemyCount++;
@@ -418,18 +479,22 @@ cc.Class({
 			this.createBoss();
 			this.hasBoss = true;
 			this.bossCount = 0;
-			// 每次出现boss后 难度升级
-			if (this.enemySpacing > 20) {
-				this.enemySpacing -= 5;
-			}
-			if (this.helicopterSpacing > 100) {
-				this.helicopterSpacing -= 10;
-			}
 		}
 		this.supplyCount++;
 		if (this.supplyCount >= this.supplySpacing) {
 			this.createSupply();
 			this.supplyCount = 0;
+		}
+		// 难度升级
+		this.timer++;
+		if (this.timer > 900) {
+			this.timer = 0;
+			if (this.enemySpacing > 20) {
+				this.enemySpacing -= 3;
+			}
+			if (this.helicopterSpacing > 100) {
+				this.helicopterSpacing -= 8;
+			}
 		}
 	},
 });
