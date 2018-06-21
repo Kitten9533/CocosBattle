@@ -106,7 +106,8 @@
     "helicopterDistance": 1,
     "hp": 3,
     "score": 10,
-    "hitCounts": 0
+    "hitCounts": 0,
+    "hasBeenDestroyed": false
   },
   {
     "__type__": "cc.PolygonCollider",

@@ -62,12 +62,6 @@ cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
 
-    onLoad() {
-
-        let ani = this.getComponent(cc.Animation);
-        ani.setCurrentTime(2, 'playerDestroy');
-    },
-
     start() {
 
     },

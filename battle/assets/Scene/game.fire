@@ -1137,6 +1137,9 @@
     "bossPrefab": {
       "__uuid__": "9544d261-fc69-44af-b19a-71857ba5390d"
     },
+    "supplyPrefab": {
+      "__uuid__": "1317fa5a-f620-4421-bbc9-b4b25574097e"
+    },
     "playerNode": {
       "__id__": 23
     },
@@ -1164,7 +1167,10 @@
     },
     "loadingNode": {
       "__id__": 16
-    }
+    },
+    "defaultBulletNum": 1,
+    "supplySpacing": 2400,
+    "supplyCount": 0
   },
   {
     "__type__": "cc.Animation",

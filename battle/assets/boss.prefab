@@ -127,7 +127,7 @@
     "playOnLoad": false
   },
   {
-    "__type__": "cc.BoxCollider",
+    "__type__": "cc.PolygonCollider",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -140,11 +140,38 @@
       "x": 0,
       "y": 0
     },
-    "_size": {
-      "__type__": "cc.Size",
-      "width": 165,
-      "height": 249
-    }
+    "points": [
+      {
+        "__type__": "cc.Vec2",
+        "x": 60,
+        "y": 125
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": 80,
+        "y": -80
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": 30,
+        "y": -115
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": -30,
+        "y": -115
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": -80,
+        "y": -80
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": -60,
+        "y": 125
+      }
+    ]
   },
   {
     "__type__": "cc.PrefabInfo",

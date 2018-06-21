@@ -26,6 +26,10 @@ cc.Class({
 			default: null,
 			type: cc.Prefab,
 		},
+		supplyPrefab: {
+			default: null,
+			type: cc.Prefab,
+		},
 		playerNode: {
 			default: null,
 			type: Player,
@@ -63,6 +67,11 @@ cc.Class({
 		//游戏logo
 		gameLogo: cc.Node,
 		loadingNode: cc.Node,
+		// 默认的子弹条数
+		defaultBulletNum: 1,
+		// 补给出现的间隔
+		supplySpacing: 1000,
+		supplyCount: 0,
 	},
 
 	// 碰撞组件tag
@@ -71,6 +80,7 @@ cc.Class({
 	// 2 enemy
 	// 3 helicopter
 	// 4 boss
+	// 5 补给
 
 	bgMove(bgList, speed) {
 		for (let index = 0; index < bgList.length; index++) {
@@ -127,7 +137,7 @@ cc.Class({
 
 	initHelicopterPool() {
 		this.helicopterPool = new cc.NodePool();
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < 20; i++) {
 			let helicopter = cc.instantiate(this.helicopterPrefab);
 			this.helicopterPool.put(helicopter);
 		}
@@ -183,6 +193,16 @@ cc.Class({
 		boss.getComponent('Boss').init(this);
 	},
 
+	createSupply() {
+		let supply = null;
+		supply = cc.instantiate(this.supplyPrefab);
+		this.node.addChild(supply);
+		let supplyWidth = supply.width;
+		let supplyHeight = supply.height;
+		supply.setPosition(this.getSupplyPos(supplyWidth, supplyHeight));
+		supply.getComponent('Supply').init(this);
+	},
+
 	destroyEnemy(enemy) {
 		this.enemyPool.put(enemy);
 	},
@@ -225,6 +245,17 @@ cc.Class({
 		return cc.p(randomX, height / 2 + helicopterHeight);
 	},
 
+	getSupplyPos(supplywidth, supplyHeight) {
+		// 随机生成敌人位置
+		let {
+			height,
+		} = this.node.getBoundingBox();
+		//去掉敌人的宽度，使敌人不会只显示一半
+		let w = this.node.width - supplywidth;
+		let randomX = -w / 2 + Math.random() * w;
+		return cc.p(randomX, height / 2 + supplyHeight);
+	},
+
 	getBossPos(helicopterwidth, helicopterHeight) {
 		// 随机生成敌人位置
 		let {
@@ -240,6 +271,13 @@ cc.Class({
 	gainScore() {
 		// 更新 scoreDisplay Label 的文字
 		this.scoreLabel.string = 'Score: ' + this.score.toString();
+	},
+
+	// 获得补给后
+	gotSupply() {
+		if (this.bulletSpacing > 10) {
+			this.bulletSpacing -= 2;
+		}
 	},
 
 	onGameStart() {
@@ -303,6 +341,10 @@ cc.Class({
 	// LIFE-CYCLE CALLBACKS:
 
 	onLoad() {
+		// 间隔最小值
+		// this.bulletSpacing = 10;
+		// this.helicopterSpacing = 150;
+		// this.enemySpacing = 30;
 		this.gameLogo.active = false;
 		this.startBtn.active = false;
 		this.loadingNode.active = false;
@@ -373,10 +415,21 @@ cc.Class({
 			this.bossCount++;
 		}
 		if ((this.score / 200) >= 1 && this.bossCount >= this.bossSpacing) {
-			// if ((this.score / 100) >= 1 && !this.hasBoss) {
 			this.createBoss();
 			this.hasBoss = true;
 			this.bossCount = 0;
+			// 每次出现boss后 难度升级
+			if (this.enemySpacing > 20) {
+				this.enemySpacing -= 5;
+			}
+			if (this.helicopterSpacing > 100) {
+				this.helicopterSpacing -= 10;
+			}
+		}
+		this.supplyCount++;
+		if (this.supplyCount >= this.supplySpacing) {
+			this.createSupply();
+			this.supplyCount = 0;
 		}
 	},
 });

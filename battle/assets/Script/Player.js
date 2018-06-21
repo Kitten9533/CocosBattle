@@ -114,6 +114,10 @@ cc.Class({
             // }, this);
             let animState = ani.play('playerDestroy');
         }
+        if (other.tag == 5) {
+            this.game.gotSupply();
+            other.node.destroy();
+        }
         // TODO
     },
 
