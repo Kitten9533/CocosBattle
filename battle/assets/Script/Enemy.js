@@ -38,6 +38,7 @@ cc.Class({
 
     init(game) {
         this.game = game;
+        this.enemyDistance = game.enemyDistance;
         this.doEnemy = true;
         this.game.enemyArray.push(this.node);
     },

@@ -57,13 +57,14 @@ cc.Class({
 
     init(game) {
         this.game = game;
+        this.bulletDistance = game.bulletDistance;
         this.doShot = true;
         this.game.bulletArray.push(this.node);
     },
 
-    playAgain() {
-        console.log('bullet anain');
-    },
+    // playAgain() {
+    //     console.log('bullet anain');
+    // },
 
     // LIFE-CYCLE CALLBACKS:
 

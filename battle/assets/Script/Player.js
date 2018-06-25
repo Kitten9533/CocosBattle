@@ -118,6 +118,10 @@ cc.Class({
             this.game.gotSupply();
             other.node.destroy();
         }
+        if (other.tag == 6) {
+            this.game.gotBomb();
+            other.node.destroy();
+        }
         // TODO
     },
 

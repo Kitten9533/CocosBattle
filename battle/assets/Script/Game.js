@@ -30,6 +30,10 @@ cc.Class({
 			default: null,
 			type: cc.Prefab,
 		},
+		supBombPrefab: {
+			default: null,
+			type: cc.Prefab,
+		},
 		playerNode: {
 			default: null,
 			type: Player,
@@ -42,6 +46,8 @@ cc.Class({
 		helicopterSpacing: null,
 		// boss生成间隔
 		bossSpacing: null,
+		// 清屏道具生成间隔
+		supBombSpacing: 3,
 		// 敌人数组
 		enemyArray: {
 			default: [],
@@ -70,10 +76,28 @@ cc.Class({
 		// 默认的子弹条数
 		defaultBulletNum: 1,
 		// 补给出现的间隔
-		supplySpacing: 1000,
+		supplySpacing: 1500,
 		supplyCount: 0,
 		gotSupplyCount: 0,
+		supBombCount: 0,
 		timer: 0,
+		// 子弹移动距离
+		bulletDistance: 30,
+		// 敌人移动距离
+		enemyDistance: 3,
+		// 直升机移动距离
+		helicopterDistance: 2,
+		// 清屏道具使用按钮
+		bombBtn: {
+			default: null,
+			type: cc.Node,
+		},
+		// 清屏道具数量
+		bombCount: null,
+		bombLable: {
+			default: null,
+			type: cc.Label,
+		},
 	},
 
 	// 碰撞组件tag
@@ -83,6 +107,7 @@ cc.Class({
 	// 3 helicopter
 	// 4 boss
 	// 5 补给
+	// 6 bomb 清屏道具
 
 	bgMove(bgList, speed) {
 		for (let index = 0; index < bgList.length; index++) {
@@ -117,6 +142,12 @@ cc.Class({
 			this.bulletSpacing -= 2;
 		}
 		this.gotSupplyCount++;
+	},
+
+	// 获得清屏道具
+	gotBomb() {
+		this.bombCount++;
+		this.setBomb();
 	},
 
 	createBulletCommon() {
@@ -254,6 +285,16 @@ cc.Class({
 		supply.getComponent('Supply').init(this);
 	},
 
+	createSupBomb() {
+		let bomb = null;
+		bomb = cc.instantiate(this.supBombPrefab);
+		this.node.addChild(bomb);
+		let bombWidth = bomb.width;
+		let bombHeight = bomb.height;
+		bomb.setPosition(this.getSupplyPos(bombWidth, bombHeight));
+		bomb.getComponent('SupBomb').init(this);
+	},
+
 	destroyEnemy(enemy) {
 		this.enemyPool.put(enemy);
 	},
@@ -336,6 +377,8 @@ cc.Class({
 	},
 
 	onGameStart() {
+		this.bombCount = 1;
+		this.setBomb();
 		let ani = this.loadingNode.getComponent(cc.Animation);
 		ani.stop();
 		this.loadingNode.active = false;
@@ -378,9 +421,41 @@ cc.Class({
 		// }
 	},
 
+	useBomb() {
+		// console.log(cc.find('enemy', this.node));
+		// console.log(this.node.getChildren());
+		this.bombCount--;
+		this.setBomb();
+		let score = 0;
+		let arr = this.node.getChildren();
+		for (var i = 0; i < arr.length; i++) {
+			let item = arr[i];
+			switch (item.name) {
+				case 'enemy':
+					score += 1;
+					item.destroy();
+					break;
+				case 'helicopter':
+					score += 10;
+					item.destroy();
+					break;
+				case 'boss':
+					score += 100;
+					item.destroy();
+					break;
+				default:
+					break;
+			}
+		}
+		this.score += score;
+		this.gainScore();
+	},
+
 	gameOver() {
 		this.gameState = false;
 		this.playAgainBtn.active = true;
+		this.bombCount = 0;
+		this.setBomb();
 	},
 
 	// hasCollision() {
@@ -393,6 +468,36 @@ cc.Class({
 	//     }
 	// },
 
+	setBomb() {
+		this.bombLable.string = this.bombCount;
+		if (this.bombCount == 0) {
+			this.bombBtn.active = false;
+			this.bombLable.node.active = false;
+		} else {
+			this.bombBtn.active = true;
+			this.bombLable.node.active = true;
+		}
+	},
+
+	initData() {
+		this.bulletDistance = 30;
+		this.enemyDistance = 3;
+		this.helicopterDistance = 2;
+	},
+
+	// 设置清屏道具的位置 和 显示数量的位置
+	setBombPos() {
+		this.bombLable.node.setPosition(this.node.width / 2 - 100, -this.node.height / 4 - 220);
+		this.bombBtn.setPosition(this.node.width / 2 - 100, -this.node.height / 4 - 150);
+	},
+
+	setZOrder() {
+		this.scoreLabel.node.setLocalZOrder(9999);
+		this.playerNode.node.setLocalZOrder(9999);
+		this.bombBtn.setLocalZOrder(9999);
+		this.playAgainBtn.setLocalZOrder(9999);
+	},
+
 	// LIFE-CYCLE CALLBACKS:
 
 	onLoad() {
@@ -400,6 +505,12 @@ cc.Class({
 		// this.bulletSpacing = 10;
 		// this.helicopterSpacing = 150;
 		// this.enemySpacing = 30;
+		// 设置各个常驻节点的层级，防止被遮盖
+		this.setZOrder();
+		this.bombCount = 0;
+		this.setBomb();
+		this.setBombPos();
+		this.initData();
 		this.gameLogo.active = false;
 		this.startBtn.active = false;
 		this.loadingNode.active = false;
@@ -475,7 +586,7 @@ cc.Class({
 		if (!this.hasBoss) {
 			this.bossCount++;
 		}
-		if ((this.score / 200) >= 1 && this.bossCount >= this.bossSpacing) {
+		if ((this.score / 240) >= 1 && this.bossCount >= this.bossSpacing) {
 			this.createBoss();
 			this.hasBoss = true;
 			this.bossCount = 0;
@@ -485,15 +596,26 @@ cc.Class({
 			this.createSupply();
 			this.supplyCount = 0;
 		}
+		this.supBombCount++;
+		if (this.supBombCount > this.supBombSpacing) {
+			this.createSupBomb();
+			this.supBombCount = 0;
+		}
 		// 难度升级
 		this.timer++;
-		if (this.timer > 900) {
+		if (this.timer > 400) {
 			this.timer = 0;
-			if (this.enemySpacing > 20) {
+			if (this.enemySpacing > 15) {
 				this.enemySpacing -= 3;
 			}
-			if (this.helicopterSpacing > 100) {
-				this.helicopterSpacing -= 8;
+			if (this.helicopterSpacing > 80) {
+				this.helicopterSpacing -= 30;
+			}
+			if (this.enemyDistance < 24) {
+				this.enemyDistance++;
+			}
+			if (this.helicopterDistance < 23) {
+				this.helicopterDistance++;
 			}
 		}
 	},

@@ -26,6 +26,7 @@ cc.Class({
 
     init(game) {
         this.game = game;
+        this.helicopterDistance = game.helicopterDistance;
     },
 
     // 锚点在正中心，所以 -height/2的位置为 画面最底部
